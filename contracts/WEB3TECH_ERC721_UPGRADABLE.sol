@@ -35,7 +35,7 @@ Contract represents a collection of unique, non-fungible tokens (NFTs). It uses 
 
 */
 
-contract Testing2 is
+contract WEB3TECH_ERC721_UPGRADABLE is
     Initializable,
     ERC721Upgradeable,
     ERC721EnumerableUpgradeable,
@@ -197,7 +197,7 @@ contract Testing2 is
      * This function can only be called externally.
      */
 
-    function withdraw() external {
+    function withdraw() external {                                             //@audit better to put how much is being withdrawn
         uint256 balance = contractBalance();
         require(balance > 0, "Insufficent funds");
         payable(owner()).transfer(balance);
