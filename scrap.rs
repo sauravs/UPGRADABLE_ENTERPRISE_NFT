@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 fn main() {
-    let file_path = "/path/to/your/text_file.txt"; // Replace with the actual file path
+    let file_path = "/path/to/your/text_file.txt"; 
     let mut count = 0;
 
     if let Ok(file) = File::open(file_path) {

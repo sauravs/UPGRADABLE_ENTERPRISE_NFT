@@ -49,12 +49,14 @@ contract WEB3TECH_ERC721_UPGRADABLE is
     string private _baseURIextended;
     uint256 private _nextTokenId;
     uint256 public _freeNftLimit; //@audit - should be made public to read for testing purpose atleast //updated to public for testing purpose
-    uint256 private maxSuppy; //@audit - should be made public to read for testing purpose atleast //updated to public for testing purpose
+    uint256 private maxSuppy; //@audit - spelling 
     uint256 private price;
 
     mapping(address => uint) public isVIPlist; // USER WHITELIST WALLET ADDRESS & Number of Token
     mapping(address => uint256) private _mintedFreeNFTCount;
-    mapping(address => uint256) private _mintedCount;
+    mapping(address => uint256) public _mintedCount;   // @audit - should be made public to read for testing purpose atleast //updated to public for testing purpose    @audit - where is counted recored for _mintedCount?
+
+
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -122,16 +124,7 @@ contract WEB3TECH_ERC721_UPGRADABLE is
         address newImplementation
     ) internal override onlyOwner {}
 
-    /**
-     * @dev Updates the state of a token.
-     * This is an internal function that overrides the `_update` function from `ERC721Upgradeable`, `ERC721EnumerableUpgradeable`, and `ERC721PausableUpgradeable`.
-     *
-     * @param to The address to transfer the token to.
-     * @param tokenId The ID of the token to transfer.
-     * @param auth The address authorized to make the transfer.
-     * @return The address that the token was transferred to.
-     */
-
+  
     function _update(
         address to,
         uint256 tokenId,
@@ -335,6 +328,7 @@ contract WEB3TECH_ERC721_UPGRADABLE is
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         payable(address(this)).transfer(msg.value);
+        _mintedCount[msg.sender]++;                                  //@audit - where is counted recored for _mintedCount? added _mintedCount[msg.sender]++; 
     }
 
     /**
@@ -392,7 +386,7 @@ contract WEB3TECH_ERC721_UPGRADABLE is
      * @param _price the new price for the token.
      */
 
-    function priceChange(uint256 _price) public onlyOwner {
+    function priceChange(uint256 _price) public onlyOwner {                 // @audit  : instead of priceChange, it should be setPrice/update price
         price = _price;
     }
 
@@ -405,4 +399,7 @@ contract WEB3TECH_ERC721_UPGRADABLE is
     function mintingPrice() public view returns (uint256 mintPrice) {
         return price;
     }
+
+
+
 }
