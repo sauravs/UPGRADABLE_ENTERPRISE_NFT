@@ -241,7 +241,7 @@ it("Should not allow public to mint NFTs if they don't send enough funds", async
 
    });
 
-
+   
 
 // Testing VIP List Related Functionality
 
@@ -260,6 +260,44 @@ describe("Testing VIP List Related Functionality", function () {
           expect(numberOfTokenLeft).to.equal(tokens);
       }
   });
+   
+  it.skip("Reverts when a non-owner tries to add users to VIP list", async function () {
+      await expect(
+          web3tech_erc721_upgradable.connect(nonOwner1).addVIPList_new([nonOwner1.address], 5)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+  });
+
+
+  it("Mints the correct number of tokens and updates the VIP list", async function () {
+    const numberOfTokens = 2;
+
+    const newPrice = ethers.parseEther("1");
+    // Change the price
+    await web3tech_erc721_upgradable.connect(owner).priceChange(newPrice);
+
+    // Retrieve the updated price
+    const mintPrice = await web3tech_erc721_upgradable.mintingPrice();
+
+    console.log("mintPrice", mintPrice.toString() / 10 ** 18);
+
+    // Check if the price was updated correctly
+    expect(mintPrice).to.equal(newPrice);
+
+    let totalPrice = mintPrice*(BigInt(numberOfTokens));
+
+    // Send enough ETH to cover the price of the tokens
+    await web3tech_erc721_upgradable.connect(nonOwner4).VIPList(numberOfTokens, { value: totalPrice });
+
+    // Check if the correct number of tokens were minted
+    const balance = await web3tech_erc721_upgradable.balanceOf(nonOwner4.address);
+    expect(balance).to.equal(numberOfTokens);
+
+    // Check if the VIP list was updated correctly
+    const vipListCount = await web3tech_erc721_upgradable.checkVIP(nonOwner4.address);
+    expect(vipListCount).to.equal(numberOfTokens);
+});
+
+    
 });
 
 

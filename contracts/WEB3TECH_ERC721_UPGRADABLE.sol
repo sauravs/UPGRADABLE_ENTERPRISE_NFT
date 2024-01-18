@@ -52,7 +52,10 @@ contract WEB3TECH_ERC721_UPGRADABLE is
     uint256 private maxSuppy; //@audit - spelling 
     uint256 private price;
 
-    mapping(address => uint) public isVIPlist; // USER WHITELIST WALLET ADDRESS & Number of Token
+    mapping(address => uint) public isVIPlist; // USER WHITELIST WALLET ADDRESS & Number of Token //@audit (or should be bool)?
+
+    
+
     mapping(address => uint256) private _mintedFreeNFTCount;
     mapping(address => uint256) public _mintedCount;   // @audit - should be made public to read for testing purpose atleast //updated to public for testing purpose    @audit - where is counted recored for _mintedCount?
 
@@ -273,15 +276,15 @@ contract WEB3TECH_ERC721_UPGRADABLE is
     function VIPList(uint256 numberOfTokens) public payable {
         require(numberOfTokens > 0, "Choose correct Number");
         require(msg.value >= price * (numberOfTokens), "Insufficient funds");
-        require(
-            isVIPlist[msg.sender] * numberOfTokens <= 5,
-            "You cannot mint more than 5 NFTs"
-        );
+        //require( isVIPlist[msg.sender] * numberOfTokens <= 5,"You cannot mint more than 5 NFTs");  //@audit  wrong logic
+          require( isVIPlist[msg.sender] <= 5,"You cannot mint more than 5 NFTs"); 
+
+
         for (uint i = 0; i < numberOfTokens; i++) {
             uint256 newItemId = _nextTokenId++;
             _safeMint(msg.sender, newItemId + 1);
         }
-        isVIPlist[msg.sender] += numberOfTokens;
+        isVIPlist[msg.sender] += numberOfTokens;   
     }
 
     /**
@@ -410,6 +413,8 @@ contract WEB3TECH_ERC721_UPGRADABLE is
     function mintingPrice() public view returns (uint256 mintPrice) {
         return price;
     }
+
+
 
 
 

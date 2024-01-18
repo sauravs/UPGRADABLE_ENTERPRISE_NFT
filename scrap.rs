@@ -29,3 +29,35 @@ fn main() {
     
 }
 
+// Write function to add two numbers
+
+fn add(a: i32, b: i32) -> i32 {
+    a + b                                        
+}
+
+// Write function to reverse a string
+
+fn reverse_string(s: &str) -> String {
+    s.chars().rev().collect::<String>()
+}
+
+// Write function to check if the given year is a leap year or not
+
+fn is_leap_year(year: i32) -> bool {
+    if year % 4 == 0 {
+        if year % 100 == 0 {
+            if year % 400 == 0 {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    return false;
+}         
+
+
+
+
+
+
