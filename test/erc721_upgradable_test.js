@@ -285,7 +285,7 @@ describe("Testing VIP List Related Functionality", function () {
 
     let totalPrice = mintPrice*(BigInt(numberOfTokens));
 
-    // Send enough ETH to cover the price of the tokens
+    // Send enough Matic to cover the price of the tokens
     await web3tech_erc721_upgradable.connect(nonOwner4).VIPList(numberOfTokens, { value: totalPrice });
 
     // Check if the correct number of tokens were minted
@@ -296,6 +296,31 @@ describe("Testing VIP List Related Functionality", function () {
     const vipListCount = await web3tech_erc721_upgradable.checkVIP(nonOwner4.address);
     expect(vipListCount).to.equal(numberOfTokens);
 });
+
+ 
+ // Reverts when a Vip list user send less funds
+
+  it("Reverts when a Vip list user send less funds", async function () {
+    const numberOfTokens = 2;
+  
+    const newPrice = ethers.parseEther("1");
+    // Change the price
+    await web3tech_erc721_upgradable.connect(owner).priceChange(newPrice);
+  
+    // Retrieve the updated price
+    const mintPrice = await web3tech_erc721_upgradable.mintingPrice();
+  
+    console.log("mintPrice", mintPrice.toString() / 10 ** 18);
+  
+    // Check if the price was updated correctly
+    expect(mintPrice).to.equal(newPrice);
+  
+    let totalPrice = mintPrice*(BigInt(numberOfTokens));
+  
+    // Send enough Matic to cover the price of the tokens
+    await expect(web3tech_erc721_upgradable.connect(nonOwner4).VIPList(numberOfTokens, { value: ethers.parseEther("0.5") })).to.be.revertedWith("Insufficient funds");
+    
+  });
 
     
 });
