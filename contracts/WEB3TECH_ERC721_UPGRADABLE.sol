@@ -305,12 +305,23 @@ contract WEB3TECH_ERC721_UPGRADABLE is
      * @notice The function sets the count of tokens minted by each new VIP user to 0.
      */
 
-    function addVIPList(address[] memory _users) public onlyOwner {
-        //Testing done
-        for (uint i = 0; i < _users.length; i++) {
-            isVIPlist[_users[i]] = 0;
-        }
+    // function addVIPList(address[] memory _users) public onlyOwner {
+    //     //Testing done
+    //     for (uint i = 0; i < _users.length; i++) {
+    //         isVIPlist[_users[i]] = 0;                //@audit  issue  addVIPList function is setting the number of tokens for each user to 0 // unit test faling
+
+    //          isVIPlist[_users[i]] = _tokens;      // @audit - updated logic
+
+
+    //     }
+    // }
+
+
+    function addVIPList_new(address[] memory _users, uint256 _tokens) public onlyOwner {
+    for (uint i = 0; i < _users.length; i++) {
+        isVIPlist[_users[i]] = _tokens;
     }
+}
 
     /**
      * @dev Safely mints a new token.

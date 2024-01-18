@@ -136,7 +136,7 @@ describe("Testing public Minting Related Functionality", function () {
     await web3tech_erc721_upgradable.connect(nonOwner1).safeMint(nonOwner1.address, { value: ethers.parseEther("1") });
     
     // Check the minted count for nonOwner1
-    const _mintedCount = await web3tech_erc721_upgradable._mintedCount(nonOwner1.address);
+    const _mintedCount = await web3tech_erc721_upgradable._mintedCount(nonOwner1.address);    // if _mintedCount removed ,then we can track via totasupply()
     expect(_mintedCount).to.equal(1);
 });
 
@@ -245,24 +245,22 @@ it("Should not allow public to mint NFTs if they don't send enough funds", async
 
 // Testing VIP List Related Functionality
 
-  describe("Testing VIP List Related Functionality", function () {                         
-   
-    it.skip("Checking if VIP List is set properly", async function () {                 // test failing
-      const users = [
-        nonOwner1.address,
-        nonOwner2.address,
-        nonOwner3.address,
-        nonOwner4.address,
-      ];
-      await web3tech_erc721_upgradable.connect(owner).addVIPList(users);
-      for (let i = 0; i < users.length; i++) {
-        const isVIP = await web3tech_erc721_upgradable.isVIPlist(users[i]);
-        expect(isVIP).to.be.true;
-      }
-    });
 
-   
+describe("Testing VIP List Related Functionality", function () {
+  it("Checking if VIP List is set properly and checkVIP returns correct token count", async function () {
+      const users = [nonOwner1.address];
+      const tokens = 5; // Each user gets 5 tokens
+
+      // Add users to VIP list
+      await web3tech_erc721_upgradable.connect(owner).addVIPList_new(users, tokens);
+
+      // Check if checkVIP returns correct token count
+      for (let i = 0; i < users.length; i++) {
+          const numberOfTokenLeft = await web3tech_erc721_upgradable.checkVIP(users[i]);
+          expect(numberOfTokenLeft).to.equal(tokens);
+      }
   });
+});
 
 
 
