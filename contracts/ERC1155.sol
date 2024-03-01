@@ -93,6 +93,10 @@ contract AnkitTesting18 is Initializable, ERC1155Upgradeable, OwnableUpgradeable
         function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal override(ERC1155Upgradeable, ERC1155SupplyUpgradeable, ERC1155PausableUpgradeable) {
             super._update(from, to, ids, values);
         }
+              
+        function maxSupply() public view returns(uint256 numberOFTokenMinted) {
+            return _maxSupply;
+        }
         // @dev Add wallet address of VIPList
         function addVIPList(address[] memory _users, uint256 _allowTokens) public onlyOwner {
             for (uint i = 0; i < _users.length; i++) {
