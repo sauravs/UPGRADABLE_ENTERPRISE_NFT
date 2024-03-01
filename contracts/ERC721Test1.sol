@@ -14,7 +14,7 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
     string private _baseURIextended;               
           
  
-       mapping(address => uint) public isVIPlist;        // stores the number of tokens an address on the VIP list minted so far.
+       mapping(address => uint) private isVIPlist;        // stores the number of tokens an address on the VIP list minted so far.
        
        uint256 private price; 
 
@@ -53,22 +53,16 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
 
 
     /// @notice Returns the current price of minting a token.
-
-
     function mintingPrice() public view returns (uint256 mintPrice) {
         return price;
     }
 
     /// @notice Allows the contract owner to pause all token transfers.
-
-
     function pause() public onlyOwner {
         _pause();
     }
 
     /// @notice Allows the contract owner to unpause all token transfers.
-
-
     function unpause() public onlyOwner {
         _unpause();
     }
@@ -83,7 +77,6 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
 
     
     /// @notice Returns the base URI for the token metadata.
-
     function _baseURI() internal view override returns (string memory) {
         return _baseURIextended;
     }
@@ -91,7 +84,6 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
       
     /// @notice Allows the contract owner to change the base URI for the token metadata.
     /// @param baseURI The new base URI for the token metadata.
-
     function _setBaseURI(string memory baseURI) public onlyOwner {
         _baseURIextended = baseURI;
     }
@@ -132,7 +124,6 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
     
     /// @notice Allows anyone to mint a token to a specific address if they send enough Ether/Matic.
     /// @param to The address to mint the token to.
-    
     function safeMint(address to) public payable whenNotPaused {
         require(msg.value >= price, "Insufficient funds");
         uint256 tokenId = _nextTokenId++;
@@ -167,8 +158,6 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
     /// @notice Allows the contract owner to add addresses to a VIP list and set the number of tokens they are allowed to mint.
     /// @param _users The addresses to add to the VIP list.
     /// @param _allowTokens The number of tokens each address is allowed to mint.
-
-
     function addVIPList(address[] memory _users, uint256 _allowTokens) public onlyOwner {
         for (uint i = 0; i < _users.length; i++) {
             isVIPlist[_users[i]] = _allowTokens;
@@ -180,12 +169,12 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
 
     /// @notice Allows an address on the VIP list to mint a specific number of tokens.
     /// @param numberOfTokens The number of tokens to mint.
-
-
     function VIPList(uint256 numberOfTokens) public payable {
         require(numberOfTokens > 0 && numberOfTokens <= 20,"Wrong Limit!");
         require(msg.value >= price * (numberOfTokens), "Insufficient funds");  // @audit what if users by mistake send much more price amount?
+        // @dev Issue Noted. Issue have been fixed.
         require(numberOfTokens <= isVIPlist[msg.sender]  , "Insufficient Token"); // @audit should be less than equal to..updated by auditor
+        // @dev Issue Noted. Issue has been fixed. 
         for(uint i = 0; i < numberOfTokens ; i++) {                               
             uint256 newItemId = _nextTokenId++;
             _safeMint(msg.sender, newItemId);
@@ -197,11 +186,10 @@ contract ERC721Test1 is ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, 
 
     /// @notice Returns the number of tokens an address on the VIP list is allowed to mint.
     /// @param walletAddress The address to check the number of tokens for.
-
-
-    function checkVIP(address walletAddress) public view returns(uint256) {    //@audit redundant function if is VIP list is public   
+    function checkVIP(address walletAddress) public view returns(uint256) {    //@audit redundant function if is VIP list is public
+    // dev - checkVip is a Read function. No redudant issue.  
     //@audit or checkVIP should be to check if the address is in VIP list or not by returning bool value
-    
+    // @dev This willl display how many token walletAddress still have. No bool require
         uint256 numberOfTokenLeft = isVIPlist[walletAddress];
         return numberOfTokenLeft;
     }
