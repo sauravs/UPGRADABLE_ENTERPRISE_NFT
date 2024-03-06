@@ -315,6 +315,27 @@ describe("Testing VIP Related Functionality", function () {
     }
   });
 
+
+  it("Already Added VIP Members should be able to Mint their respective configured NFTs", async function () {
+
+    // Add the addresses to the VIP list
+    const users = [nonOwner3.address, nonOwner4.address];
+    const allowTokens = 5;
+    await erc1155_uups.connect(owner).addVIPList(users, allowTokens);
+
+
+  const price = ethers.parseEther("0.1");
+
+  let tokenId = 1;
+  let amount = 1;
+  let totalPrice = price * BigInt(amount);
+
+    // Mint the token
+
+    await erc1155_uups.connect(nonOwner3).mintVIPList(tokenId, amount, { value: totalPrice});
+
+  });
+
   });
 
 
