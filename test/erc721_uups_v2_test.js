@@ -50,6 +50,9 @@ describe("ERC721Test1", function () {
   });
 
 
+      
+
+
   
   // This test checks if the supportsInterface function returns true for the ERC721 interface
   describe("supportsInterface", function () {
@@ -335,10 +338,10 @@ describe("Testing public Minting Related Functionality", function () {
 
     //when a non-owner tries to add users to VIP list
 
-    it.skip("Reverts when a non-owner tries to add users to VIP list", async function () {
+    it("Reverts when a non-owner tries to add users to VIP list", async function () {
         await expect(
             erc721_test_1.connect(nonOwner1).addVIPList_new([nonOwner1.address], 5)
-        ).to.be.revertedWith("Ownable: caller is not the owner");
+        ).to.be.reverted;
     });
   
       

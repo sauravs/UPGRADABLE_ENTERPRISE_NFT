@@ -11,15 +11,15 @@ pragma solidity ^0.8.21;
         import "@openzeppelin/contracts/utils/Strings.sol";
 
 
-contract AnkitTesting18 is Initializable, ERC1155Upgradeable, OwnableUpgradeable, ERC1155SupplyUpgradeable, ERC1155PausableUpgradeable, UUPSUpgradeable {
+contract ERC1155_UUPS is Initializable, ERC1155Upgradeable, OwnableUpgradeable, ERC1155SupplyUpgradeable, ERC1155PausableUpgradeable, UUPSUpgradeable {
         using Strings for uint256;
-      uint256 private price;
+        uint256 private price;
 
         
         uint256 private _nextTokenId;    
         string private _name;
         string private _symbol;
-        mapping(address => uint) private isVIPlist; // USER WHITELIST WALLET ADDRESS & Number of Token
+        mapping(address => uint) private isVIPlist;       // USER WHITELIST WALLET ADDRESS & Number of Token
         uint256 private _maxSupply;
         function initialize() initializer public {
           __ERC1155_init("https://ipfs.io/ipfs/QmZKHp2YTDT217YoLQSnpBVA8o65nkGRSiffcSfnMfPBrT");
@@ -30,7 +30,7 @@ contract AnkitTesting18 is Initializable, ERC1155Upgradeable, OwnableUpgradeable
           _name = "AnkitTesting18";
           _symbol = "AnkitTest18";
           _maxSupply= 10000;
-          price = 10000000000000000000000;
+          price = 10000000000000000000;
           _nextTokenId = 1;
         }
         // Function to receive Ether. msg."" must be empty
@@ -63,12 +63,18 @@ contract AnkitTesting18 is Initializable, ERC1155Upgradeable, OwnableUpgradeable
         
         // URI of the token id.
         function uri(uint256 _id) public view override returns (string memory) {
-            require(exists(_id), "Non-exists token");
+            require(exists(_id), "Non-exists token");                            //@audit where is exists function?
             return
                 string(
                     abi.encodePacked(super.uri(_id), Strings.toString(_id), ".json")
                 );
         }
+
+
+         // @audit where is the function to set baseURI ?
+
+
+
         // @dev Balance of token this contracts hold in wei form.
         function contractBalance() public view returns(uint256 fund) {
             return address(this).balance;
@@ -94,9 +100,7 @@ contract AnkitTesting18 is Initializable, ERC1155Upgradeable, OwnableUpgradeable
             super._update(from, to, ids, values);
         }
               
-        function maxSupply() public view returns(uint256 numberOFTokenMinted) {
-            return _maxSupply;
-        }
+    
         // @dev Add wallet address of VIPList
         function addVIPList(address[] memory _users, uint256 _allowTokens) public onlyOwner {
             for (uint i = 0; i < _users.length; i++) {
@@ -139,4 +143,40 @@ contract AnkitTesting18 is Initializable, ERC1155Upgradeable, OwnableUpgradeable
             require(ids.length == amounts.length,"Length should match");
             _mintBatch(to, ids, amounts, "");
         }
+     
+         // name getter view  function
+
+         function getName() external view returns(string memory){
+              return _name;
+         }
+
+
+            // symbol getter view  function
+
+            function getSymbol() external view returns(string memory){
+                return _symbol;
+            }
+
+        
+            
+            // isVIPlist getter view  function  
+
+            function getIsVIPlist(address _address) external view returns(uint256){
+                return isVIPlist[_address];
+            }
+
+           // maxSupply getter view  function
+            function getmaxSupply() public view returns(uint256 numberOFTokenMinted) {
+            return _maxSupply;
+        }
+
+        // nextTokenId getter view  function
+
+        function getnextTokenId() public view returns(uint256 nextTokenId) {
+            return _nextTokenId;
+        }
+
+
+
+
 }
